@@ -4,19 +4,18 @@ from django.db import models
 class Pokemon(models.Model):
     title_ru = models.CharField(
         max_length=200,
-        null=True,
-        verbose_name="Заголовок"
+        verbose_name="Заголовок",
     )
     title_en = models.CharField(
         max_length=200,
         verbose_name="Заголовок на английском",
-        null=True,
+        blank=True
     )
     title_ja = models.CharField(
         max_length=200,
-        blank=True,
-        null=True,
-        verbose_name="Заголовок на японском")
+        verbose_name="Заголовок на японском",
+        blank=True
+    )
     photo = models.ImageField(
         blank=True,
         null=True,
@@ -25,7 +24,7 @@ class Pokemon(models.Model):
     description = models.TextField(
         blank=True,
         verbose_name="Описание",
-        null=True
+        default=""
     )
 
     previous_evolution = models.ForeignKey(
