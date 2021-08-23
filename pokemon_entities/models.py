@@ -2,6 +2,15 @@ from django.db import models
 
 
 class Pokemon(models.Model):
+    previous_evolution = models.ForeignKey(
+        'self',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='next_evolution',
+        verbose_name="Предыдущая эволюция",
+    )
+
     title_ru = models.CharField(
         max_length=200,
         verbose_name="Заголовок",
@@ -27,15 +36,6 @@ class Pokemon(models.Model):
         default=""
     )
 
-    previous_evolution = models.ForeignKey(
-        'self',
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        related_name='next_evolution',
-        verbose_name="Предыдущая эволюция",
-    )
-
     def __str__(self):
         return self.title_ru
 
@@ -44,6 +44,7 @@ class PokemonEntity(models.Model):
     pokemon = models.ForeignKey(
         Pokemon,
         on_delete=models.CASCADE,
+        related_name="entities",
         verbose_name="Покемон",
     )
 

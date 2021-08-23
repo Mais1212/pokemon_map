@@ -71,6 +71,7 @@ def show_pokemon(request, pokemon_id):
 
     if pokemons[0].pokemon.id == int(pokemon_id):
         requested_pokemons = pokemons
+        print(dir(pokemons[0]))
         requested_pokemon = pokemons[0].pokemon
     else:
         return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
@@ -104,7 +105,6 @@ def show_pokemon(request, pokemon_id):
             "pokemon_id": next_pokemon.id,
             "img_url": get_pokemon_img_url(request, next_pokemon)
         }
-    print(requested_pokemon.next_evolution)
     return render(request, 'pokemon.html', context={
         'map': folium_map._repr_html_(), 'pokemon': pokemon
     })
