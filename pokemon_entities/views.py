@@ -1,5 +1,3 @@
-import dataclasses
-
 import folium
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
@@ -13,13 +11,6 @@ DEFAULT_IMAGE_URL = (
     '/latest/fixed-aspect-ratio-down/width/240/height/240?cb=20130525215832'
     '&fill=transparent'
 )
-
-
-@dataclasses.dataclass(frozen=True)
-class Pokemon:
-    pokemon_id: int
-    img_url: str
-    title_ru: str
 
 
 def get_pokemon_img_url(request, pokemon):
@@ -50,15 +41,16 @@ def show_all_pokemons(request):
             pokemon.longitude,
             get_pokemon_img_url(request, pokemon.pokemon)
         )
-    pokemons_on_page = set()
+    pokemons_on_page = []
 
     for pokemon in pokemons:
-        pokemon = Pokemon(
-            pokemon.pokemon.id,
-            get_pokemon_img_url(request, pokemon.pokemon),
-            pokemon.pokemon.title_ru
-        )
-        pokemons_on_page.add(pokemon)
+        pokemon = {
+            "pokemon_id": pokemon.pokemon.id,
+            "img_url": get_pokemon_img_url(request, pokemon.pokemon),
+            "title_ru": pokemon.pokemon.title_ru
+        }
+        if pokemon not in pokemons_on_page:
+            pokemons_on_page.append(pokemon)
 
     return render(request, 'mainpage.html', context={
         'map': folium_map._repr_html_(),
