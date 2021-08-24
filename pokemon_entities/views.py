@@ -3,7 +3,7 @@ from django.http import HttpResponseNotFound
 from django.shortcuts import render
 from numpy import number
 
-from pokemon_entities.models import PokemonEntity
+from pokemon_entities.models import Pokemon
 
 MOSCOW_CENTER = [55.751244, 37.618423]
 DEFAULT_IMAGE_URL = (
@@ -32,22 +32,25 @@ def add_pokemon(folium_map, lat, lon, image_url=DEFAULT_IMAGE_URL):
 
 
 def show_all_pokemons(request):
-    pokemons = PokemonEntity.objects.all()
+    pokemons = Pokemon.objects.all()
+    # print(pokemons[0].entities.first().latitude)
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     for pokemon in pokemons:
-        add_pokemon(
-            folium_map, pokemon.latitude,
-            pokemon.longitude,
-            get_pokemon_img_url(request, pokemon.pokemon)
-        )
+        pokemon_entities = pokemon.entities.all()
+        for pokemon_entity in pokemon_entities:
+            add_pokemon(
+                folium_map, pokemon_entity.latitude,
+                pokemon_entity.longitude,
+                get_pokemon_img_url(request, pokemon)
+            )
     pokemons_on_page = []
 
     for pokemon in pokemons:
         pokemon = {
-            "pokemon_id": pokemon.pokemon.id,
-            "img_url": get_pokemon_img_url(request, pokemon.pokemon),
-            "title_ru": pokemon.pokemon.title_ru
+            "pokemon_id": pokemon.id,
+            "img_url": get_pokemon_img_url(request, pokemon),
+            "title_ru": pokemon.title_ru
         }
         if pokemon not in pokemons_on_page:
             pokemons_on_page.append(pokemon)
@@ -59,12 +62,12 @@ def show_all_pokemons(request):
 
 
 def show_pokemon(request, pokemon_id):
-    pokemons = PokemonEntity.objects.filter(pokemon__id=pokemon_id)
+    pokemon = Pokemon.objects.get(id=pokemon_id)
 
-    if pokemons[0].pokemon.id == int(pokemon_id):
-        requested_pokemons = pokemons
-        print(dir(pokemons[0]))
-        requested_pokemon = pokemons[0].pokemon
+    if pokemon.id == int(pokemon_id):
+        requested_pokemon = pokemon
+        requested_pokemons = pokemon.entities.all()
+        print(requested_pokemons)
     else:
         return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
 
