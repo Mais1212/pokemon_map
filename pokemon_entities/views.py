@@ -66,7 +66,6 @@ def show_pokemon(request, pokemon_id):
     if pokemon.id == int(pokemon_id):
         requested_pokemon = pokemon
         requested_pokemons = pokemon.entities.all()
-        print(requested_pokemons)
     else:
         return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
 
