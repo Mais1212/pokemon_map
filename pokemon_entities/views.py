@@ -1,6 +1,5 @@
 import folium
 from django.http import HttpResponseNotFound
-from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from numpy import number
 
@@ -64,7 +63,7 @@ def show_all_pokemons(request):
 def show_pokemon(request, pokemon_id):
     try:
         requested_pokemon = Pokemon.objects.get(id=pokemon_id)
-    except ObjectDoesNotExist:
+    except Pokemon.DoesNotExist:
         return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
 
     requested_pokemons = requested_pokemon.entities.all()
